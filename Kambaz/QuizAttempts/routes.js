@@ -2,7 +2,6 @@ import * as attemptDao from "./dao.js";
 import * as quizzesDao from "../Quizzes/dao.js";
 
 export default function QuizAttemptRoutes(app) {
-  // Get all attempts for a user on a specific quiz
   app.get("/api/quizzes/:quizId/attempts", async (req, res) => {
     try {
       const { quizId } = req.params;
@@ -53,7 +52,6 @@ export default function QuizAttemptRoutes(app) {
     }
   });
 
-  // Start a new attempt
   app.post("/api/quizzes/:quizId/attempts", async (req, res) => {
     try {
       const { quizId } = req.params;
@@ -66,18 +64,15 @@ export default function QuizAttemptRoutes(app) {
       const userId =
         currentUser._id || currentUser.username || currentUser.loginId;
 
-      // Get quiz to check attempt limits
       const quiz = await quizzesDao.findQuizById(quizId);
       if (!quiz) {
         return res.status(404).json({ message: "Quiz not found" });
       }
 
-      // Check if quiz is published
       if (!quiz.published && currentUser.role === "STUDENT") {
         return res.status(403).json({ message: "Quiz is not published" });
       }
 
-      // Check attempt count
       const attemptCount = await attemptDao.getAttemptCount(userId, quizId);
       if (!quiz.multipleAttempts && attemptCount > 0) {
         return res
@@ -91,7 +86,6 @@ export default function QuizAttemptRoutes(app) {
         });
       }
 
-      // Create new attempt
       const attempt = {
         quiz: quizId,
         user: String(userId),
@@ -114,7 +108,6 @@ export default function QuizAttemptRoutes(app) {
     }
   });
 
-  // Submit/complete an attempt
   app.put("/api/attempts/:attemptId/submit", async (req, res) => {
     try {
       const { attemptId } = req.params;
@@ -140,13 +133,11 @@ export default function QuizAttemptRoutes(app) {
         return res.status(400).json({ message: "Attempt already completed" });
       }
 
-      // Get quiz to grade answers
       const quiz = await quizzesDao.findQuizById(attempt.quiz);
       if (!quiz) {
         return res.status(404).json({ message: "Quiz not found" });
       }
 
-      // Grade the answers
       let totalScore = 0;
       const gradedAnswers = answers.map((answer) => {
         const question = quiz.questions.find(
@@ -211,7 +202,6 @@ export default function QuizAttemptRoutes(app) {
     }
   });
 
-  // Get a specific attempt (for reviewing)
   app.get("/api/attempts/:attemptId", async (req, res) => {
     try {
       const { attemptId } = req.params;
@@ -229,7 +219,6 @@ export default function QuizAttemptRoutes(app) {
       const userId =
         currentUser._id || currentUser.username || currentUser.loginId;
 
-      // Students can only see their own attempts, faculty can see all
       if (
         currentUser.role === "STUDENT" &&
         String(attempt.user) !== String(userId)

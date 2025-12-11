@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const answerSchema = new mongoose.Schema(
   {
     questionId: { type: String, required: true },
-    answer: mongoose.Schema.Types.Mixed, // Can be string, boolean, or array
+    answer: mongoose.Schema.Types.Mixed,
     isCorrect: { type: Boolean },
     pointsEarned: { type: Number, default: 0 },
   },
@@ -30,7 +30,6 @@ const quizAttemptSchema = new mongoose.Schema(
   }
 );
 
-// Index for finding attempts by user and quiz
 quizAttemptSchema.index({ user: 1, quiz: 1 });
 
 export default quizAttemptSchema;

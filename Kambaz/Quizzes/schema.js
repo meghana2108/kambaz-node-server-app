@@ -12,16 +12,14 @@ const questionSchema = new mongoose.Schema(
     points: { type: Number, default: 1 },
     question: { type: String, required: true },
     group: { type: String, default: "General Knowledge" }, // Question group
-    // For Multiple Choice
+   
     choices: [
       {
         text: String,
         isCorrect: Boolean,
       },
     ],
-    // For True/False
     correctAnswer: { type: Boolean },
-    // For Fill in Blank
     possibleAnswers: [{ type: String }],
     caseSensitive: { type: Boolean, default: false },
   },

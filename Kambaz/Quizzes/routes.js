@@ -1,7 +1,6 @@
 import * as quizzesDao from "./dao.js";
 
 export default function QuizzesRoutes(app) {
-  // Get all quizzes for a course
   app.get("/api/courses/:courseId/quizzes", async (req, res) => {
     try {
       const { courseId } = req.params;
@@ -9,7 +8,6 @@ export default function QuizzesRoutes(app) {
 
       let quizzes = await quizzesDao.findQuizzesForCourse(courseId);
 
-      // Students only see published quizzes
       if (currentUser?.role === "STUDENT") {
         quizzes = quizzes.filter((quiz) => quiz.published);
       }
